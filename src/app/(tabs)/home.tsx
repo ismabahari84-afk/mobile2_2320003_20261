@@ -1,10 +1,27 @@
+import { getAuthSession, UserData } from "@/services/authService";
 import { homeStyles } from "@/styles/homeStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+// ... (import Alert, ScrollView, Text, TouchableOpacity, View, SafeAreaView tetap)
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
-  const { email } = useLocalSearchParams<{ email?: string }>();
+  const [user, setUser] = useState<UserData | null>(null);
+  useEffect(() => {
+    getAuthSession().then((session) => {
+      if (session) setUser(session.user);
+    });
+    // ...
+    // Di dalam kartu sambutan (welcomeCard):
+    // <View style={homeStyles.statusBadge}>
+    //<Ionicons name="checkmark-circle" size={15} color="#059669" />
+    //<Text style={homeStyles.statusBadgeText}>Terhubung ke Server Laravel 13</Text>
+    //</View>
+    //<Text style={homeStyles.greetingTitle}>Halo, {user?.name || "Selamat Datang"}!</Text>
+    //<Text style={homeStyles.greetingEmail}>{user?.email || "mahasiswa@kampus.ac.id"}</Text>
+  }, []);
+
   const handleMenuPress = (menuName: string, targetRoute?: string) => {
     if (targetRoute) {
       router.push(targetRoute as never);
@@ -27,12 +44,12 @@ export default function HomeScreen() {
           <View style={homeStyles.statusBadge}>
             <Ionicons name="checkmark-circle" size={15} color="#059669" />
             <Text style={homeStyles.statusBadgeText}>
-              Berhasil Masuk (UI Mode)
+              Berhasil Masuk (UI Mode) Terhubung ke Server Laravel 13
             </Text>
           </View>
           <Text style={homeStyles.greetingTitle}>Halo, Selamat Datang!</Text>
           <Text style={homeStyles.greetingEmail}>
-            {email || "mahasiswa@kampus.ac.id"}
+            {user?.email || "mahasiswa@kampus.ac.id"}
           </Text>
         </View>
         {/* Menu Cepat Bergaya Marketplace */}
